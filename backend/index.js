@@ -1,7 +1,9 @@
 import express from "express";
 import { PORT, mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
-import itemsRoute from './routes/itemsRoutes.js';
+import schemaRoute from './routes/schemaRoutes.js';
+import itemRoute from './routes/itemRoutes.js';
+
 import cors from 'cors'
 
 const app = express();
@@ -17,7 +19,8 @@ app.get('/', (request, response) => {
 
 
 //routes handling:
-app.use('/items', itemsRoute);
+app.use('/schema', schemaRoute);
+app.use('/items', itemRoute);
 
 
 mongoose.connect(mongoDBURL).then(()=>{
