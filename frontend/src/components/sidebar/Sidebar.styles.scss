@@ -1,0 +1,14 @@
+.sidebar{
+    &__container{
+        background-color: #252A34;
+        position: fixed;
+        width: 300px;
+        height: 100vh;
+        color: white;
+        padding-top: 32px;
+        &__padding{
+            margin-right: 300px;
+        
+        }
+    }
+}

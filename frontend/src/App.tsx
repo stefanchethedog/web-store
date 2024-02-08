@@ -1,12 +1,23 @@
 import { Routes, Route } from 'react-router-dom';
 
+import { Sidebar } from './components';
+import { CreateItem, CreateSchema, MainItems, MainSchema, UpdateItem, UpdateSchema } from './pages';
 import './App.css';
 
 function App() {
   return (
-    <Routes>
-
-    </Routes>
+    <div className="app">
+      <Sidebar/>
+      <Routes>
+        <Route path="/" element={<div></div>}/>
+        <Route path="/schema/create" element={<CreateSchema/>}/>
+        <Route path="/schema/update/:name" element={<UpdateSchema/>}/>
+        <Route path="/item/create" element={<CreateItem/>}/>
+        <Route path="/item/update/:id" element={<UpdateItem/>}/>
+        <Route path="/item/main" element={<MainItems/>}/>
+        <Route path="/schema/main" element={<MainSchema/>}/>
+      </Routes>
+    </div>
   );
 }
 

@@ -1,0 +1,10 @@
+.main-schema{
+    &__container{
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+
+        overflow-y: scroll;
+        width: 100%;
+    }
+}
