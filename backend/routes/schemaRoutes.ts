@@ -1,5 +1,5 @@
 import express from "express";
-import { Schema } from "../models/schemaModel.js";
+import { Schema } from "../models/schemaModel";
 
 const router = express.Router();
 
@@ -20,13 +20,14 @@ router.post('/', async (req, res) => {
 
 // GET METHODS
 // Get All schema
-router.get("/", async (req, res) => {
+router.get("/", async (_, res) => {
   try {
     const schemas = await Schema.find({});
     return res.status(200).json(schemas);
   } catch (err) {
-    console.log(err.message)
-    res.status(500).send({message: err.message})
+    const error: Error = err as Error;
+    console.log(error.message)
+    res.status(500).send({ message: error.message })
   }
 });
 

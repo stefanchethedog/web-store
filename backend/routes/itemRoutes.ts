@@ -1,5 +1,5 @@
 import express from 'express';
-import { createItem, getItems, getItemById, updateItem, deleteItem } from './../controllers/itemController.js';
+import { createItem, getItems, getItemById, updateItem, deleteItem } from '../controllers/itemController';
 
 const router = express.Router();
 
@@ -10,7 +10,8 @@ router.post('/:schemaName', async (req, res) => {
     const newItem = await createItem(schemaName, req.body);
     res.status(201).json(newItem);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -21,7 +22,8 @@ router.post('/create-unnested/:schemaName', async (req, res) => {
     const newItem = await createItem(schemaName, req.body, false);
     res.status(201).json(newItem);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -32,7 +34,8 @@ router.get('/:schemaName', async (req, res) => {
     const items = await getItems(schemaName);
     res.json(items);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -43,7 +46,8 @@ router.get('/:schemaName/:itemId', async (req, res) => {
     const item = await getItemById(schemaName, itemId);
     res.json(item);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -54,7 +58,8 @@ router.put('/:schemaName/:itemId', async (req, res) => {
     const updatedItem = await updateItem(schemaName, itemId, req.body);
     res.json(updatedItem);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -64,7 +69,8 @@ router.put('/update-unnested/:schemaName/:itemId', async (req, res) => {
     const updatedItem = await updateItem(schemaName, itemId, req.body, false);
     res.json(updatedItem);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -75,7 +81,8 @@ router.delete('/:schemaName/:itemId', async (req, res) => {
     await deleteItem(schemaName, itemId);
     res.json({ message: 'Item deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const err = error as Error;
+    res.status(500).json({ error: err.message });
   }
 });
 
