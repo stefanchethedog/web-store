@@ -2,16 +2,58 @@
 
 .card{
     &__container{
-        width: 220px;
-        height: 300px;
+        width: 250px;
+        height: 360px;
         margin: 16px;
         background-color: colors.$sky-captain;
         border: 4px solid colors.$fish-boy;
         border-radius: 32px;
+        position: relative;
         
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
         color:white;
+
+        &__title{
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        &__field{
+            &__key{
+                font-weight: 700;
+            }
+
+            &__nested{
+                margin-left: 20px;
+            }
+        }
+
+
+        &__buttons{
+            display: flex;
+            bottom: 20px;
+            margin-bottom: 10px;
+            &__delete{
+                background-color: red;
+                position: relative;
+                padding: 6px 2px;
+            }
+            &__update{
+                position: relative;
+                padding: 6px 2px;
+                background-color: gray;
+            }
+
+            &__icon{
+                color: white;
+                position: absolute;
+                top: 6px;
+            }
+        }
         
     }
 }

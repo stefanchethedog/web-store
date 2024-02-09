@@ -2,6 +2,7 @@
 
 .sidebar{
     &__container{
+        //background: linear-gradient(0deg, colors.$sky-captain , colors.$fish-boy , colors.$sky-captain);
         background-color: colors.$sky-captain;
         position: fixed;
         width: 300px;

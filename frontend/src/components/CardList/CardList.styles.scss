@@ -1,0 +1,21 @@
+@use '../../styles/colors';
+
+.card-list{
+    &__container{
+        background: linear-gradient(0deg, colors.$sky-captain , colors.$fish-boy , colors.$sky-captain);
+        margin-left: 32px;
+        margin-top: 16px;
+        border-radius: 32px;
+
+        &__title{
+            color:White;
+            margin: 0;
+            margin-top: 10px;
+            margin-left: 30px;
+        }
+
+        &__wrapper{
+            display: flex;
+        }
+    }
+}

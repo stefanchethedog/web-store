@@ -14,6 +14,7 @@
     "@types/node": "^16.18.79",
     "@types/react": "^18.2.54",
     "@types/react-dom": "^18.2.18",
+    "axios": "^1.6.7",
     "classnames": "^2.5.1",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
