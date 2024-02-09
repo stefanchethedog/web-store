@@ -4,7 +4,7 @@ import { createItem, getItems, getItemById, updateItem, deleteItem } from '../co
 const router = express.Router();
 
 // Create an item with nested documents
-router.post('/:schemaName', async (req, res) => {
+router.post('/create-nested/:schemaName', async (req, res) => {
   const { schemaName } = req.params;
   try {
     const newItem = await createItem(schemaName, req.body);
@@ -28,7 +28,7 @@ router.post('/create-unnested/:schemaName', async (req, res) => {
 });
 
 // Get all items for a particular schema
-router.get('/:schemaName', async (req, res) => {
+router.get('/get-items-by-schema-name/:schemaName', async (req, res) => {
   const { schemaName } = req.params;
   try {
     const items = await getItems(schemaName);
@@ -40,7 +40,7 @@ router.get('/:schemaName', async (req, res) => {
 });
 
 // Get an item by ID
-router.get('/:schemaName/:itemId', async (req, res) => {
+router.get('/get-item-by-id/:schemaName/:itemId', async (req, res) => {
   const { schemaName, itemId } = req.params;
   try {
     const item = await getItemById(schemaName, itemId);
@@ -48,6 +48,30 @@ router.get('/:schemaName/:itemId', async (req, res) => {
   } catch (error) {
     const err = error as Error;
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Get items by schemas
+router.post('/get-items-by-schemas', async (req, res) => {
+  try {
+      const schemas: string[] = req.body;
+
+      const itemsPromises = schemas.map(async (schemaName) => {
+          try {
+              console.log(schemaName);
+              const items = await getItems(schemaName);
+              return { name: schemaName, items: items };
+          } catch (error) {
+              throw error;
+          }
+      });
+
+      const items = await Promise.all(itemsPromises);
+
+      res.json(items);
+  } catch (error) {
+      const err = error as Error;
+      res.status(500).json({ error: err.message });
   }
 });
 

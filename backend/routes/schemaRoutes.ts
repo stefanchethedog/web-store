@@ -31,6 +31,39 @@ router.get("/", async (_, res) => {
   }
 });
 
+// Get Schema Names
+router.get("/get-all-schema-names", async (_, res) => {
+  try {
+    const schemas = await Schema.find({});
+    return res.status(200).json(schemas.map(schema=>schema.name));
+  } catch (err) {
+    const error: Error = err as Error;
+    console.log(error.message)
+    res.status(500).send({ message: error.message })
+  }
+})
+
+// Get schemas interface
+router.get("/get-schemas-interface", async(_,res)=>{
+  try {
+    const schemas = await Schema.find({});
+
+    const resp: {name: String, interface: any}[] = schemas.map((schema)=>({
+      name: schema.name,
+      interface: schema.keys.reduce((acc: any, key, index)=>({
+        ...acc,
+        [key.name]: key.type,
+      }),{})
+    }))
+
+    return res.status(200).json(resp);
+  } catch (err) {
+    const error: Error = err as Error;
+    console.log(error.message)
+    res.status(500).send({ message: error.message })
+  }
+})
+
 // Get a single schema by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -46,7 +79,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get a single schema by name (unique + index)
-router.get('/:name', async (req, res) => {
+router.get('/get-by-name/:name', async (req, res) => {
   try {
     const schema = await Schema.findOne({ name: req.params.name });
     if (!schema) {
@@ -77,7 +110,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Update a schema by name
-router.put('/:name', async (req, res) => {
+router.put('/update-by-name/:name', async (req, res) => {
   try {
     const { keys } = req.body;
     const updatedSchema = await Schema.findOneAndUpdate({ name: req.params.name }, { keys }, { new: true });
