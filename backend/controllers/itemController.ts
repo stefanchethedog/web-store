@@ -1,16 +1,21 @@
-import { ObjectId } from 'mongodb';
-import { createItemModel, createNestedItemModel } from '../models/itemModel.js';
-import { Schema as SchemaModel } from '../models/schemaModel.js';
+import { createItemModel, createNestedItemModel } from '../models/itemModel';
+import { Model } from 'mongoose';
+import { Schema } from '../models/schemaModel';
+import validPayload from '../utils/schema-validator';
 
 // Create an ItemModel instance based on the provided schema name
-const createItem = async (schemaName, data, isNested= true) => {
+const createItem = async (schemaName: string, data: any, isNested = true) => {
+  console.log(data);
   try {
-    
-    let ItemModel;
-    const schema = await SchemaModel.findOne({ name: schemaName });
-    if(isNested)
+    const schema = await Schema.findOne({ name: schemaName });
+    const result = validPayload(data, schema);
+    if (result !== true) {
+      throw new Error(result.toString());
+    }
+    let ItemModel: typeof Model;
+    if (isNested)
       ItemModel = await createNestedItemModel(schemaName)
-    else{
+    else {
       ItemModel = await createItemModel(schemaName);
     }
     const newItem = new ItemModel(data);
@@ -23,10 +28,10 @@ const createItem = async (schemaName, data, isNested= true) => {
 };
 
 // Get all items of a particular schema
-const getItems = async (schemaName, isNested= true) => {
+const getItems = async (schemaName: string, isNested = true) => {
   try {
-    let ItemModel;
-    ItemModel = isNested? await createNestedItemModel(schemaName): await createItemModel(schemaName);
+    let ItemModel: typeof Model;
+    ItemModel = isNested ? await createNestedItemModel(schemaName) : await createItemModel(schemaName);
 
     const items = await ItemModel.find();
     return items;
@@ -37,10 +42,10 @@ const getItems = async (schemaName, isNested= true) => {
 };
 
 // Get a single item by ID
-const getItemById = async (schemaName, itemId, isNested= true) => {
+const getItemById = async (schemaName: string, itemId: any, isNested = true) => {
   try {
-    let ItemModel;
-    ItemModel = isNested? await createNestedItemModel(schemaName): await createItemModel(schemaName);
+    let ItemModel: typeof Model;
+    ItemModel = isNested ? await createNestedItemModel(schemaName) : await createItemModel(schemaName);
 
     const item = await ItemModel.findById(itemId);
     if (!item) {
@@ -54,10 +59,10 @@ const getItemById = async (schemaName, itemId, isNested= true) => {
 };
 
 // Update an item by ID
-const updateItem = async (schemaName, itemId, newData, isNested= true) => {
+const updateItem = async (schemaName: string, itemId: any, newData: any, isNested = true) => {
   try {
     let ItemModel;
-    ItemModel = isNested? await createNestedItemModel(schemaName): await createItemModel(schemaName);
+    ItemModel = isNested ? await createNestedItemModel(schemaName) : await createItemModel(schemaName);
 
     const updatedItem = await ItemModel.findByIdAndUpdate(itemId, newData, { new: true });
     if (!updatedItem) {
@@ -71,10 +76,10 @@ const updateItem = async (schemaName, itemId, newData, isNested= true) => {
 };
 
 // Delete an item by ID
-const deleteItem = async (schemaName, itemId, isNested= true) => {
+const deleteItem = async (schemaName: string, itemId: any, isNested = true) => {
   try {
     let ItemModel;
-    ItemModel = isNested? await createNestedItemModel(schemaName): await createItemModel(schemaName);
+    ItemModel = isNested ? await createNestedItemModel(schemaName) : await createItemModel(schemaName);
 
     const deletedItem = await ItemModel.findByIdAndDelete(itemId);
     if (!deletedItem) {
