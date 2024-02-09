@@ -1,6 +1,8 @@
+@use '../../styles/colors';
+
 .sidebar{
     &__container{
-        background-color: #252A34;
+        background-color: colors.$sky-captain;
         position: fixed;
         width: 300px;
         height: 100vh;

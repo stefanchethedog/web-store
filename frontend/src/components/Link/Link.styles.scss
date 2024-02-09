@@ -1,14 +1,15 @@
+@use '../../styles/colors';
 
 .link{
     &__container{
-        background-color: #08D9D6;
+        background-color: colors.$fish-boy;
         display: flex;
         justify-content: center;
         margin: 10px 20px;
         border-radius: 4px;
 
         &--matched{
-            background-color: #fc7f9e;
+            background-color: colors.$chinese-new-year;
         }
 
         &__link{
@@ -19,7 +20,7 @@
             text-align: center;
             font-size: large;
             font-weight: 600;
-            color: #EAEAEA;
+            color: colors.$plaster;
             display: flex;
             align-items: center;
             justify-content: center;
