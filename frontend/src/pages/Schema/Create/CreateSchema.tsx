@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { FC, useState } from 'react';
+import { CREATE_SCHEMA } from '../../../api';
 
 import './CreateSchema.styles.scss';
 import SchemaKey from './Schema-Key';
@@ -17,6 +19,14 @@ const CreateSchema: FC<CreateSchemaProps> = ({ }) => {
   const [name, setName] = useState("");
   const [keys, setKeys] = useState<IKey[]>([]);
   const [nextIndex, setNextIndex] = useState(0);
+
+  const handleSchemaCreation = (name: string, keys: IKey[]) => {
+    axios.post(CREATE_SCHEMA, { name, keys }).then(() => {
+      console.log('schema created');
+    }).catch((reason) => {
+      console.error(reason);
+    })
+  }
 
   const handleNameChange = (value: string, index: number) => {
     setKeys(keys.map((key) => {
@@ -85,10 +95,7 @@ const CreateSchema: FC<CreateSchemaProps> = ({ }) => {
       </div>
       <button
         onClick={() => {
-          console.log({
-            name,
-            keys: [...keys]
-          })
+          handleSchemaCreation(name, keys);
         }}
       >Create</button>
     </div>

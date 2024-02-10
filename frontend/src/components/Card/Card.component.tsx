@@ -5,6 +5,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import "./Card.styles.scss";
 import Link from "../Link";
+import axios from "axios";
+import { DELETE_SCHEMA_BY_NAME } from "../../api";
+import { Button } from "@mui/material";
 
 interface InterfaceDefinition {
   [key: string]: string;
@@ -77,16 +80,25 @@ function Card<T>(props: CardProps<T>) {
             to={`/${type}/update/${type === "schema" ? title : data._id}`}
             className="card__container__buttons__update"
           >
-            <EditIcon className="card__container__buttons__icon"/>
+            <EditIcon className="card__container__buttons__icon" />
           </Link>
         )}
         {data && (
-          <Link
-            to={`/${type}/delete/${type === "schema" ? title : data._id}`}
+          <Button
             className="card__container__buttons__delete"
+            variant="contained"
+            color="error"
+            onClick={() => {
+              if (type === "schema") {
+                axios
+                  .delete(DELETE_SCHEMA_BY_NAME(title!))
+                  .then(() => console.log('deleted schema'))
+                  .catch((reason) => console.error(reason));
+              }
+            }}
           >
-            <DeleteIcon className="card__container__buttons__icon"/>
-          </Link>
+            <DeleteIcon className="card__container__buttons__icon" />
+          </Button>
         )}
       </div>
     </div>
