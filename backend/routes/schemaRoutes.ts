@@ -35,7 +35,7 @@ router.get("/", async (_, res) => {
 router.get("/get-all-schema-names", async (_, res) => {
   try {
     const schemas = await Schema.find({});
-    return res.status(200).json(schemas.map(schema=>schema.name));
+    return res.status(200).json(schemas.map(schema => schema.name));
   } catch (err) {
     const error: Error = err as Error;
     console.log(error.message)
@@ -44,16 +44,16 @@ router.get("/get-all-schema-names", async (_, res) => {
 })
 
 // Get schemas interface
-router.get("/get-schemas-interface", async(_,res)=>{
+router.get("/get-schemas-interface", async (_, res) => {
   try {
     const schemas = await Schema.find({});
 
-    const resp: {name: String, interface: any}[] = schemas.map((schema)=>({
+    const resp: { name: String, interface: any }[] = schemas.map((schema) => ({
       name: schema.name,
-      interface: schema.keys.reduce((acc: any, key, index)=>({
+      interface: schema.keys.reduce((acc: any, key, index) => ({
         ...acc,
-        [key.name]: key.type,
-      }),{})
+        [key.name]: { type: key.type, required: key.required },
+      }), {})
     }))
 
     return res.status(200).json(resp);
