@@ -1,7 +1,8 @@
 import classNames from "classnames";
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useSnackbar } from "notistack";
 
 import "./Card.styles.scss";
 import Link from "../Link";
@@ -23,6 +24,8 @@ interface CardProps<T> {
 
 function Card<T>(props: CardProps<T>) {
   const { className: classes, data, interfaceForCard, title, type } = props;
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const className = classNames("card__container", classes);
 
@@ -92,8 +95,15 @@ function Card<T>(props: CardProps<T>) {
               if (type === "schema") {
                 axios
                   .delete(DELETE_SCHEMA_BY_NAME(title!))
-                  .then(() => console.log('deleted schema'))
-                  .catch((reason) => console.error(reason));
+                  .then(() => {
+                    enqueueSnackbar(`Succesfully deleted ${type}: ${title}`, {variant: 'success'});
+                  })
+                  .catch((reason) => {
+                    enqueueSnackbar(
+                      `Error deleting ${type}: ${reason.message}`,
+                      { variant: "error" }
+                    );
+                  });
               }
             }}
           >
