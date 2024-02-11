@@ -7,7 +7,7 @@ import { useSnackbar } from "notistack";
 import "./Card.styles.scss";
 import Link from "../Link";
 import axios from "axios";
-import { DELETE_SCHEMA_BY_NAME } from "../../api";
+import { DELETE_ITEM_BY_ID, DELETE_SCHEMA_BY_NAME } from "../../api";
 import { Button } from "@mui/material";
 
 interface InterfaceDefinition {
@@ -20,6 +20,7 @@ interface CardProps<T> {
   title?: String;
   className?: string;
   interfaceForCard: InterfaceDefinition;
+  schemaName?: string;
 }
 
 function Card<T>(props: CardProps<T>) {
@@ -80,7 +81,7 @@ function Card<T>(props: CardProps<T>) {
       <div className="card__container__buttons">
         {data && (
           <Link
-            to={`/${type}/update/${type === "schema" ? title : data._id}`}
+            to={`/${type}/update/${type === "schema" ? title : `${props.schemaName}/${data._id}`}`}
             className="card__container__buttons__update"
           >
             <EditIcon className="card__container__buttons__icon" />
@@ -96,7 +97,7 @@ function Card<T>(props: CardProps<T>) {
                 axios
                   .delete(DELETE_SCHEMA_BY_NAME(title!))
                   .then(() => {
-                    enqueueSnackbar(`Succesfully deleted ${type}: ${title}`, {variant: 'success'});
+                    enqueueSnackbar(`Succesfully deleted ${type}: ${title}`, { variant: 'success' });
                   })
                   .catch((reason) => {
                     enqueueSnackbar(
@@ -104,6 +105,11 @@ function Card<T>(props: CardProps<T>) {
                       { variant: "error" }
                     );
                   });
+              } else {
+                axios
+                  .delete(DELETE_ITEM_BY_ID(props.schemaName!, data._id))
+                  .then(() => enqueueSnackbar(`Successfully deleted ${type}: ${data._id}`, { variant: "success" }))
+                  .catch((reason) => enqueueSnackbar(`Error deleting ${type}: ${reason.message}`));
               }
             }}
           >

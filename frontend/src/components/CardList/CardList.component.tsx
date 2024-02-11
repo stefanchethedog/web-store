@@ -34,6 +34,7 @@ function CardList<T>(props: CardListProps<T>) {
           data.map((element) => {
             return (
               <Card
+                schemaName={schemaName.toString()}
                 data={element}
                 interfaceForCard={interfaceForCard}
                 type="item"
