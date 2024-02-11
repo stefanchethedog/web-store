@@ -1,18 +1,18 @@
 import { Error } from "@mui/icons-material";
 import {
-  TextField,
   Button,
-  Stack,
+  Stack, TextField
 } from "@mui/material";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import { FC, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { GET_ALL_SCHEMAS, GET_SCHEMA_BY_NAME, UPDATE_SCHEMA_BY_NAME } from "../../../api";
-import { useSnackbar } from "notistack";
+import { GET_SCHEMA_BY_NAME, UPDATE_SCHEMA_BY_NAME } from "../../../api";
 
-import "./UpdateSchema.styles.scss";
-import SchemaKey from "../Create/Schema-Key";
+import useAvailableSchemas from "../../../hooks/useAvailableSchemas";
 import capitalize from "../../../utils/capitalize";
+import SchemaKey from "../Create/Schema-Key";
+import "./UpdateSchema.styles.scss";
 
 interface UpdateSchemaProps { }
 
@@ -33,7 +33,7 @@ const UpdateSchema: FC<UpdateSchemaProps> = ({ }) => {
   const [schema, setSchema] = useState<ISchemaResponse | null>(null);
   const [error, setError] = useState("");
   const { pathname } = useLocation();
-  const [schemas, setSchemas] = useState<string[]>([]);
+  const { schemas, error: schemasFetchError } = useAvailableSchemas();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -49,10 +49,6 @@ const UpdateSchema: FC<UpdateSchemaProps> = ({ }) => {
       .catch((reason) => {
         setError(reason);
       });
-    axios
-      .get<ISchemaResponse[]>(GET_ALL_SCHEMAS)
-      .then((response) => setSchemas(response.data.map((schema) => schema.name)))
-      .catch((_) => enqueueSnackbar('Failed to fetch available schemas', { variant: "error" }));
   }, []);
 
   const updateKeys = <T,>(keyName: string, propName: string, value: T) => {
@@ -96,7 +92,7 @@ const UpdateSchema: FC<UpdateSchemaProps> = ({ }) => {
                     name={key.name}
                     type={key.type}
                     index={key._id}
-                    availableSchemas={schemas}
+                    availableSchemas={!schemasFetchError ? schemas : undefined}
                     onRemove={handleKeyRemove}
                     onPropChange={handleKeyChange}
                   />

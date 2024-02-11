@@ -2,6 +2,7 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { FC, useState } from "react";
 import { CREATE_SCHEMA } from "../../../api";
+import useAvailableSchemas from "../../../hooks/useAvailableSchemas";
 
 import capitalize from "../../../utils/capitalize";
 import "./CreateSchema.styles.scss";
@@ -20,6 +21,7 @@ const CreateSchema: FC<CreateSchemaProps> = ({ }) => {
   const [name, setName] = useState("");
   const [keys, setKeys] = useState<IKey[]>([]);
   const [nextIndex, setNextIndex] = useState(0);
+  const { schemas, error: schemaFetchError } = useAvailableSchemas();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -72,6 +74,7 @@ const CreateSchema: FC<CreateSchemaProps> = ({ }) => {
                 index={key.index}
                 onRemove={handleKeyRemove}
                 onPropChange={handleKeyChange}
+                availableSchemas={!schemaFetchError ? schemas : undefined}
               />
             </>
           );
