@@ -1,26 +1,26 @@
 import { Error } from "@mui/icons-material";
 import {
-  Checkbox,
-  TextField,
-  Select,
   Button,
-  MenuItem,
-  Stack,
+  Stack, TextField
 } from "@mui/material";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import { FC, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { GET_SCHEMA_BY_NAME, UPDATE_SCHEMA_BY_NAME } from "../../../api";
-import { useSnackbar } from "notistack";
 
+import useAvailableSchemas from "../../../hooks/useAvailableSchemas";
+import capitalize from "../../../utils/capitalize";
+import SchemaKey from "../Create/Schema-Key";
 import "./UpdateSchema.styles.scss";
 
-interface UpdateSchemaProps {}
+interface UpdateSchemaProps { }
 
 interface IKey {
   name: string;
   type: string;
   required: boolean;
+  _id: string;
 }
 
 interface ISchemaResponse {
@@ -29,10 +29,11 @@ interface ISchemaResponse {
   keys: IKey[];
 }
 
-const UpdateSchema: FC<UpdateSchemaProps> = ({}) => {
+const UpdateSchema: FC<UpdateSchemaProps> = ({ }) => {
   const [schema, setSchema] = useState<ISchemaResponse | null>(null);
   const [error, setError] = useState("");
   const { pathname } = useLocation();
+  const { schemas, error: schemasFetchError } = useAvailableSchemas();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -56,6 +57,10 @@ const UpdateSchema: FC<UpdateSchemaProps> = ({}) => {
         return { ...k, [propName]: value };
       } else return k;
     });
+  };
+
+  const handleKeyRemove = (id: number | string) => {
+    setSchema({ ...schema!, keys: schema!.keys.filter((key) => key._id !== id) });
   };
 
   const handleKeyChange = <T,>(keyName: string, propName: string, value: T) => {
@@ -82,42 +87,45 @@ const UpdateSchema: FC<UpdateSchemaProps> = ({}) => {
             {schema.keys.map((key) => {
               return (
                 <Stack direction="row">
-                  <TextField
-                    value={key.name}
-                    onChange={(e) =>
-                      handleKeyChange(key.name, "name", e.target.value)
-                    }
-                  ></TextField>
-                  <Select
-                    label={key.name}
-                    value={key.type.toLowerCase() ?? ""}
-                    onChange={(e) =>
-                      handleKeyChange(key.name, "type", e.target.value)
-                    }
-                  >
-                    {["string", "number"].map((type) => {
-                      return <MenuItem value={type}>{type}</MenuItem>;
-                    })}
-                  </Select>
-                  <Checkbox
-                    checked={key.required}
-                    onChange={(e) =>
-                      handleKeyChange(key.name, "required", e.target.value)
-                    }
+                  <SchemaKey
+                    required={key.required}
+                    name={key.name}
+                    type={key.type}
+                    index={key._id}
+                    availableSchemas={!schemasFetchError ? schemas : undefined}
+                    onRemove={handleKeyRemove}
+                    onPropChange={handleKeyChange}
                   />
                 </Stack>
               );
             })}
           </Stack>
           <Button
+            variant="outlined"
+            color="info"
+            onClick={() => {
+              setSchema({
+                ...schema, keys: [...schema.keys, {
+                  name: "", required: false,
+                  _id: "", type: ""
+                }]
+              })
+            }}
+          >
+            Add Key
+          </Button>
+          <Button
             variant="contained"
             onClick={() => {
               axios
-                .put(UPDATE_SCHEMA_BY_NAME(schemaName), { ...schema })
-                .then((res) => {
+                .put(
+                  UPDATE_SCHEMA_BY_NAME(schemaName),
+                  { ...schema, keys: schema.keys.map((key) => ({ name: key.name, required: key.required, type: capitalize(key.type) })) }
+                )
+                .then((_) => {
                   enqueueSnackbar(`Succesfully updated ${schemaName}`);
                 })
-                .catch((err) => {
+                .catch((_) => {
                   enqueueSnackbar(`Error when updating ${schemaName}`, {
                     variant: "error",
                   });
