@@ -5,10 +5,10 @@ import validPayload from '../utils/schema-validator';
 
 // Create an ItemModel instance based on the provided schema name
 const createItem = async (schemaName: string, data: any, isNested = true) => {
-  console.log(data);
   try {
     const schema = await Schema.findOne({ name: schemaName });
-    const result = validPayload(data, schema);
+    const allSchemas = await Schema.find();
+    const result = validPayload(data, schema, allSchemas);
     if (result !== true) {
       throw new Error(result.toString());
     }

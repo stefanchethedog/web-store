@@ -11,7 +11,7 @@ enum ValidationError {
   WrongKeyType = "Wrong Key Type"
 }
 
-export default function validPayload(data: any, schema: Partial<SchemaType>): ValidationError | true {
+export default function validPayload(data: any, schema: Partial<SchemaType>, allSchemas: Partial<SchemaType>[]): ValidationError | true {
   if (!schema) {
     return ValidationError.NoData;
   }
@@ -19,7 +19,8 @@ export default function validPayload(data: any, schema: Partial<SchemaType>): Va
     if (!data[key.name] && key.required) {
       return ValidationError.MissingRequiredField;
     }
-    if (typeof data[key.name] !== key.type) {
+    if (typeof data[key.name] !== key.type.toLowerCase() && !allSchemas.some((schema) => schema!.name == key.name)) {
+      console.log(key.name);
       return ValidationError.WrongKeyType;
     }
   }
