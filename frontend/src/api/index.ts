@@ -28,6 +28,8 @@ const ITEMS_BASE = `${BASE_URL}/items`;
 const GET_ALL_ITEMS_FROM_SCHEMAS = `${ITEMS_BASE}/get-items-by-schemas`;
 const GET_ITEM_BY_ID = (schema: string, itemId: string) => `${ITEMS_BASE}/get-item-by-id/${schema}/${itemId}`;
 const DELETE_ITEM_BY_ID = (schema: string, itemId: string) => `${ITEMS_BASE}/${schema}/${itemId}`;
+const CREATE_UNNESTED_ITEM = (schema: string) => `${ITEMS_BASE}/create-unnested/${schema}`;
+const CREATE_NESTED_ITEM = (schema: string) => `${ITEMS_BASE}/create-nested/${schema}`;
 
 export {
   GET_ALL_SCHEMAS,
@@ -44,4 +46,6 @@ export {
   GET_ALL_ITEMS_FROM_SCHEMAS,
   GET_ITEM_BY_ID,
   DELETE_ITEM_BY_ID,
+  CREATE_UNNESTED_ITEM,
+  CREATE_NESTED_ITEM,
 };

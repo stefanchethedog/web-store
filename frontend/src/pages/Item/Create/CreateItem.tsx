@@ -1,10 +1,11 @@
 import { Stack, TextField, Typography, Button } from '@mui/material';
 import axios from 'axios';
-import { enqueueSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import { FC, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GET_SCHEMA_INTERFACE } from '../../../api';
-import { ISchema, ISchemaInterface, KeyInterface } from '../../../types/schema';
+import { CREATE_NESTED_ITEM, CREATE_UNNESTED_ITEM, GET_SCHEMA_INTERFACE } from '../../../api';
+import { ISchemaInterface } from '../../../types/schema';
+import cast from '../../../utils/cast';
 
 import './CreateItem.styles.scss';
 
@@ -16,33 +17,94 @@ const CreateItem: FC<CreateItemProps> = ({ }) => {
   const [interfaces, setInterfaces] = useState<ISchemaInterface[]>([]);
   const [schemaInterface, setSchemaInterface] = useState<ISchemaInterface | null>(null);
   const [item, setItem] = useState<any>({});
+  const { enqueueSnackbar } = useSnackbar();
 
   const paths = pathname.split("/");
   const schemaName = paths.at(-1);
 
-  const handleKeyChange = (keyName: string, value: any) => {
-    setItem({ ...item, [keyName]: value });
+  const getNestedValue = (schemaNames: string[]) => {
+    let currentLevel = item;
+    for (let i = 1; i < schemaNames.length - 1; i++) {
+      const key = schemaNames[i];
+      if (!currentLevel[key]) {
+        currentLevel[key] = {};
+      }
+      currentLevel = currentLevel[key];
+    }
+    const lastKey = schemaNames[schemaNames.length - 1];
+    return currentLevel[lastKey!];
   }
 
-  const renderNested = (schemaName: string): any => {
-    const schemaInterface = interfaces.filter((iface) => iface.name === schemaName)[0];
+  const handleKeyChange = (schemaNames: string[], value: any) => {
+    if (schemaNames.length == 2) {
+      setItem({ ...item, [schemaNames[1]]: value });
+      return;
+    }
+    setItem((current: any) => {
+      let newData = { ...current };
+      let currentLevel = newData;
+      for (let i = 1; i < schemaNames.length - 1; i++) {
+        const key = schemaNames[i];
+        if (!currentLevel[key]) {
+          currentLevel[key] = {};
+        }
+        currentLevel = currentLevel[key];
+      }
+      const lastKey = schemaNames[schemaNames.length - 1];
+      currentLevel[lastKey!] = value;
+      return newData;
+    });
+  }
+
+  const handleCreate = () => {
+    const isNested = Object.keys(schemaInterface!.interface!).some((key) => schemaInterface!.interface[key].type === 'Schema');
+    if (isNested) {
+      axios
+        .post(CREATE_NESTED_ITEM(schemaName!), { ...item })
+        .then((res) => {
+          console.log(res);
+          enqueueSnackbar('Successfully created an item', { variant: "success" });
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar(`Error creating an item ${err.response.data.error}`, { variant: "error" });
+        })
+    }
+    else {
+      axios
+        .post(CREATE_UNNESTED_ITEM(schemaName!), { ...item })
+        .then((res) => {
+          console.log(res);
+          enqueueSnackbar('Successfully created an item', { variant: "success" });
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar(`Error creating an item ${err.response.data.error}`, { variant: "error" });
+        })
+    }
+  }
+
+  const renderNested = (schemaName: string[]): any => {
+    const schemaInterface = interfaces.filter((iface) => iface.name === schemaName.at(-1))[0];
     return (
       <>
         {Object.keys(schemaInterface.interface).map((key) => {
           if (schemaInterface.interface[key].type === 'Schema') {
             return (
-              <>
+              <Stack>
                 <Typography variant="h6">{key}</Typography>
-                {renderNested(key)}
-              </>
+                {renderNested([...schemaName, key])}
+              </Stack>
             )
           }
           return (
             <TextField
+              key={`${key}-${schemaName}`}
               label={key}
-              value={item[key]}
+              value={getNestedValue([...schemaName, key])}
               required={schemaInterface.interface[key].required}
-              onChange={(e) => handleKeyChange(key, e.target.value)}
+              type={schemaInterface.interface[key].type}
+              onChange={(e) => handleKeyChange([...schemaName, key], cast(e.target.value, schemaInterface.interface[key].type))}
             >
             </TextField>
           );
@@ -65,29 +127,11 @@ const CreateItem: FC<CreateItemProps> = ({ }) => {
     <div className="create-item__container">
       <Typography variant="h4">Create item of {schemaName}</Typography>
       <Stack direction="row">
-        {schemaInterface && Object.keys(schemaInterface.interface).map((key) => {
-          if (schemaInterface.interface[key].type === 'Schema') {
-            return (
-              <Stack>
-                <Typography variant="h6">{key}</Typography>
-                {renderNested(key)}
-              </Stack>
-            )
-          }
-          return (
-            <TextField
-              label={key}
-              value={item[key]}
-              required={schemaInterface.interface[key].required}
-              onChange={(e) => handleKeyChange(key, e.target.value)}
-            >
-            </TextField>
-          );
-        })}
+        {schemaInterface && renderNested([schemaName!])}
       </Stack>
       <Button
         variant="contained"
-        onClick={() => console.log(item)}
+        onClick={handleCreate}
       >
         Submit
       </Button>

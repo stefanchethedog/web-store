@@ -31,6 +31,7 @@ const UpdateItem: FC<UpdateItemProps> = ({ }) => {
         }
         return (
           <TextField
+            key={`${key}-${item[schemaName]}`}
             margin="dense"
             label={key}
             value={item[schemaName][key]}
