@@ -26,6 +26,8 @@ const CREATE_SCHEMA = `${SCHEMAS_BASE}`;
 const ITEMS_BASE = `${BASE_URL}/items`;
 
 const GET_ALL_ITEMS_FROM_SCHEMAS = `${ITEMS_BASE}/get-items-by-schemas`;
+const GET_ITEM_BY_ID = (schemaName: string, id: string) => `${ITEMS_BASE}/get-item-by-id/${schemaName}/${id}`
+const UPDATE_ITEM = (schemaName: string, id: string) => `${ITEMS_BASE}/${schemaName}/${id}`
 
 export {
   GET_ALL_SCHEMAS,
@@ -39,5 +41,7 @@ export {
   GET_ALL_SCHEMA_NAMES,
   GET_SCHEMA_INTERFACE,
 
-  GET_ALL_ITEMS_FROM_SCHEMAS
+  GET_ALL_ITEMS_FROM_SCHEMAS,
+  GET_ITEM_BY_ID,
+  UPDATE_ITEM
 };

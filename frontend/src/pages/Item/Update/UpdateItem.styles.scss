@@ -1,0 +1,26 @@
+@use '../../../styles/colors';
+
+.update-item{
+    &__wrapper{
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        background-color: colors.$plaster;
+    }
+
+    &__container{
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        padding: 20px;
+        background-color: #EAEAEA;
+        border-radius: 8px;
+
+        &__title{
+            align-self: center;
+            margin-top: 4px;
+
+        }
+    }
+}

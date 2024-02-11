@@ -37,6 +37,7 @@ function CardList<T>(props: CardListProps<T>) {
                 data={element}
                 interfaceForCard={interfaceForCard}
                 type="item"
+                title={schemaName}
               />
             );
           })}

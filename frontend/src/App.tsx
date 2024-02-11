@@ -13,7 +13,7 @@ function App() {
         <Route path="/schema/create" element={<CreateSchema/>}/>
         <Route path="/schema/update/:name" element={<UpdateSchema/>}/>
         <Route path="/item/create/:schemaName" element={<CreateItem/>}/>
-        <Route path="/item/update/:id" element={<UpdateItem/>}/>
+        <Route path="/item/update/:id/:schemaName" element={<UpdateItem/>}/>
         <Route path="/item/main" element={<MainItems/>}/>
         <Route path="/schema/main" element={<MainSchema/>}/>
       </Routes>

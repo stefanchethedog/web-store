@@ -9,7 +9,7 @@ const Home: FC<HomeProps> = ({}) => {
 
 
     return (
-        <div className="Home__container">
+        <div className="home__container">
             Home
         </div>
     );

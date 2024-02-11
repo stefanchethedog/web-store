@@ -80,7 +80,9 @@ function Card<T>(props: CardProps<T>) {
       <div className="card__container__buttons">
         {data && (
           <Link
-            to={`/${type}/update/${type === "schema" ? title : data._id}`}
+            to={`/${type}/update/${type === "schema" ? title : data._id}/${
+              type === "item" ? title : ""
+            }`}
             className="card__container__buttons__update"
           >
             <EditIcon className="card__container__buttons__icon" />
@@ -96,7 +98,9 @@ function Card<T>(props: CardProps<T>) {
                 axios
                   .delete(DELETE_SCHEMA_BY_NAME(title!))
                   .then(() => {
-                    enqueueSnackbar(`Succesfully deleted ${type}: ${title}`, {variant: 'success'});
+                    enqueueSnackbar(`Succesfully deleted ${type}: ${title}`, {
+                      variant: "success",
+                    });
                   })
                   .catch((reason) => {
                     enqueueSnackbar(
