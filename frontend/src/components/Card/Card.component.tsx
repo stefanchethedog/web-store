@@ -1,10 +1,14 @@
 import classNames from "classnames";
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useSnackbar } from "notistack";
 
 import "./Card.styles.scss";
 import Link from "../Link";
+import axios from "axios";
+import { DELETE_SCHEMA_BY_NAME } from "../../api";
+import { Button } from "@mui/material";
 
 interface InterfaceDefinition {
   [key: string]: string;
@@ -20,6 +24,8 @@ interface CardProps<T> {
 
 function Card<T>(props: CardProps<T>) {
   const { className: classes, data, interfaceForCard, title, type } = props;
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const className = classNames("card__container", classes);
 
@@ -77,16 +83,32 @@ function Card<T>(props: CardProps<T>) {
             to={`/${type}/update/${type === "schema" ? title : data._id}`}
             className="card__container__buttons__update"
           >
-            <EditIcon className="card__container__buttons__icon"/>
+            <EditIcon className="card__container__buttons__icon" />
           </Link>
         )}
         {data && (
-          <Link
-            to={`/${type}/delete/${type === "schema" ? title : data._id}`}
+          <Button
             className="card__container__buttons__delete"
+            variant="contained"
+            color="error"
+            onClick={() => {
+              if (type === "schema") {
+                axios
+                  .delete(DELETE_SCHEMA_BY_NAME(title!))
+                  .then(() => {
+                    enqueueSnackbar(`Succesfully deleted ${type}: ${title}`, {variant: 'success'});
+                  })
+                  .catch((reason) => {
+                    enqueueSnackbar(
+                      `Error deleting ${type}: ${reason.message}`,
+                      { variant: "error" }
+                    );
+                  });
+              }
+            }}
           >
-            <DeleteIcon className="card__container__buttons__icon"/>
-          </Link>
+            <DeleteIcon className="card__container__buttons__icon" />
+          </Button>
         )}
       </div>
     </div>

@@ -1,10 +1,12 @@
-import { FC, useState } from 'react';
+import axios from "axios";
+import { FC, useState } from "react";
+import { CREATE_SCHEMA } from "../../../api";
+import { useSnackbar } from "notistack";
 
-import './CreateSchema.styles.scss';
-import SchemaKey from './Schema-Key';
+import "./CreateSchema.styles.scss";
+import SchemaKey from "./Schema-Key";
 
-interface CreateSchemaProps {
-}
+interface CreateSchemaProps {}
 
 interface IKey {
   name: string;
@@ -13,42 +15,60 @@ interface IKey {
   index: number;
 }
 
-const CreateSchema: FC<CreateSchemaProps> = ({ }) => {
+const CreateSchema: FC<CreateSchemaProps> = ({}) => {
   const [name, setName] = useState("");
   const [keys, setKeys] = useState<IKey[]>([]);
   const [nextIndex, setNextIndex] = useState(0);
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleSchemaCreation = (name: string, keys: IKey[]) => {
+    axios
+      .post(CREATE_SCHEMA, { name, keys })
+      .then(() => {
+        enqueueSnackbar(`Created schema with name: ${name}`, {variant:'success'});
+      })
+      .catch((reason) => {
+        enqueueSnackbar(`Error creating schema with name: ${name}`, {
+          variant: "error",
+        });
+      });
+  };
+
   const handleNameChange = (value: string, index: number) => {
-    setKeys(keys.map((key) => {
-      if (key.index === index) {
-        return { ...key, name: value };
-      }
-      else return key;
-    }))
-  }
+    setKeys(
+      keys.map((key) => {
+        if (key.index === index) {
+          return { ...key, name: value };
+        } else return key;
+      })
+    );
+  };
 
   const handleTypeChange = (value: string, index: number) => {
-    setKeys(keys.map((key) => {
-      if (key.index === index) {
-        return { ...key, type: value };
-      }
-      else return key;
-    }))
-  }
+    setKeys(
+      keys.map((key) => {
+        if (key.index === index) {
+          return { ...key, type: value };
+        } else return key;
+      })
+    );
+  };
 
   const handleRequiredChange = (value: boolean, index: number) => {
     console.log("handle required change");
-    setKeys(keys.map((key) => {
-      if (key.index === index) {
-        return { ...key, required: value };
-      }
-      else return key;
-    }))
-  }
+    setKeys(
+      keys.map((key) => {
+        if (key.index === index) {
+          return { ...key, required: value };
+        } else return key;
+      })
+    );
+  };
 
   const handleKeyRemove = (index: number) => {
-    setKeys(keys.filter((key) => key.index !== index))
-  }
+    setKeys(keys.filter((key) => key.index !== index));
+  };
 
   return (
     <div className="create-schema__container">
@@ -74,23 +94,27 @@ const CreateSchema: FC<CreateSchemaProps> = ({ }) => {
                 onRemove={handleKeyRemove}
               />
             </>
-          )
+          );
         })}
         <button
           onClick={() => {
-            setKeys([...keys, { name: "", type: "", required: false, index: nextIndex }]);
+            setKeys([
+              ...keys,
+              { name: "", type: "", required: false, index: nextIndex },
+            ]);
             setNextIndex(nextIndex + 1);
           }}
-        >Add key</button>
+        >
+          Add key
+        </button>
       </div>
       <button
         onClick={() => {
-          console.log({
-            name,
-            keys: [...keys]
-          })
+          handleSchemaCreation(name, keys);
         }}
-      >Create</button>
+      >
+        Create
+      </button>
     </div>
   );
 };
